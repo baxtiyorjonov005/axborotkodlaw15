@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Huffman Kodlash</title>
+  <link rel="stylesheet" href="main.css">
+  <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg,
+        #2b1810 0%,
+        #3e2723 50%,
+        #4e342e 100%);
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #f5ebe0;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  h1 {
+    text-align: center;
+    background: linear-gradient(135deg, #6f4e37 0%, #3e2723 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    font-size: 42px;
+    font-weight: 800;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #6d4c41;
+    margin-bottom: 40px;
+    font-size: 16px;
+  }
+
+  .description {
+    background: linear-gradient(135deg, #d7ccc8 0%, #bcaaa4 100%);
+    padding: 20px;
+    border-radius: 12px;
+    color: #3e2723;
+    margin-bottom: 30px;
+    line-height: 1.8;
+    border-left: 5px solid #5d4037;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 12px;
+    color: #4e342e;
+    font-weight: 600;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 18px;
+    border: 3px solid #a1887f;
+    border-radius: 12px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    font-family: "Courier New", monospace;
+    background: #fffaf5;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: #5d4037;
+    box-shadow: 0 0 0 4px rgba(93, 64, 55, 0.3);
+  }
+
+  .button-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  button {
+    background: linear-gradient(135deg, #6f4e37 0%, #3e2723 100%);
+    color: white;
+    border: none;
+    padding: 15px 35px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(62, 39, 35, 0.6);
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: linear-gradient(135deg, #8d6e63, #4e342e);
+  }
+
+  button.secondary {
+    background: linear-gradient(135deg, #a1887f, #6d4c41);
+  }
+
+  .result-box {
+    background: #efebe9;
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+    border-left: 6px solid #5d4037;
+  }
+
+  .result-box h3 {
+    color: #4e342e;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .code-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fffaf5;
+    border-radius: 12px;
+  }
+
+  .code-table th {
+    background: linear-gradient(135deg, #6f4e37, #3e2723);
+    color: white;
+    padding: 16px;
+  }
+
+  .code-table td {
+    padding: 16px;
+    border-bottom: 1px solid #d7ccc8;
+    color: #3e2723;
+  }
+
+  .code-table tr:nth-child(even) {
+    background: #ede7e3;
+  }
+
+  #huffmanTree {
+    width: 100%;
+    height: 450px;
+    border: 3px solid #a1887f;
+    border-radius: 15px;
+    margin-top: 25px;
+    background: #fffaf5;
+  }
+
+  .stat-card {
+    background: #fffaf5;
+    padding: 25px;
+    border-radius: 15px;
+    border-left: 5px solid #5d4037;
+  }
+
+  .stat-card p {
+    color: #4e342e;
+    font-size: 32px;
+    font-weight: 800;
+  }
+
+  .encoded-text {
+    background: #ffffff;
+
+    
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #a1887f;
+    font-family: "Courier New", monospace;
+    color: #3e2723;
+  }
+
+  .info-box {
+    background: linear-gradient(135deg, #d7ccc8, #bcaaa4);
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #4e342e;
+  }
+
+  code {
+    background: #4e342e;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+</style>
+
+</head>
+
+<body>
+  <div class="container">
+    <h1>🔐 Huffman Kodlash Dasturi</h1>
+    <p class="subtitle">Ma'lumotlarni siqishning eng samarali algoritmi</p>
+
+    <div class="description">
+      <strong>📚 Huffman kodlash nima?</strong><br />
+      Huffman kodlash - bu ma'lumotlarni yo'qotishsiz siqish algoritmi bo'lib,
+      1952 yilda David Huffman tomonidan yaratilgan. Bu algoritm har bir belgi
+      uchun chastotasiga qarab optimal uzunlikdagi binary kod belgilaydi.
+      <strong>Ko'p uchraydigan belgilar qisqa kod oladi</strong> (masalan:
+      10), <strong>kam uchraydiganlar esa uzunroq kod oladi</strong> (masalan:
+      11010). Natijada umumiy ma'lumot hajmi sezilarli darajada qisqaradi!
+    </div>
+
+    <label for="huffmanInput"> 📝 Matnni kiriting: </label>
+    <textarea id="huffmanInput" rows="6" placeholder="Bu yerga matn kiriting...">
+Huffman</textarea>
+
+    <div class="button-group">
+      <button onclick="huffmanEncode()">🔒 Kodlash</button>
+      <button class="secondary" onclick="huffmanDecode()">
+        🔓 Dekodlash
+      </button>
+    </div>
+
+    <div id="huffmanResults"></div>
+
+    <canvas id="huffmanTree"></canvas>
+  </div>
+
+  <script>
+    // ========== HUFFMAN KODLASH ==========
+
+    class HuffmanNode {
+      constructor(char, freq) {
+        this.char = char;
+        this.freq = freq;
+        this.left = null;
+        this.right = null;
+      }
+    }
+
+    let huffmanRoot = null;
+    let huffmanCodes = {};
+    let encodedHuffman = "";
+
+    function buildHuffmanTree(text) {
+      const freqMap = {};
+      for (let char of text) {
+        freqMap[char] = (freqMap[char] || 0) + 1;
+      }
+
+      const nodes = Object.entries(freqMap).map(
+        ([char, freq]) => new HuffmanNode(char, freq)
+      );
+
+      while (nodes.length > 1) {
+        nodes.sort((a, b) => a.freq - b.freq);
+
+        const left = nodes.shift();
+        const right = nodes.shift();
+
+        const parent = new HuffmanNode(null, left.freq + right.freq);
+        parent.left = left;
+        parent.right = right;
+
+        nodes.push(parent);
+      }
+
+      return nodes[0];
+    }
+
+    function generateCodes(node, code = "", codes = {}) {
+      if (node.char !== null) {
+        codes[node.char] = code || "0";
+        return codes;
+      }
+
+      if (node.left) generateCodes(node.left, code + "0", codes);
+      if (node.right) generateCodes(node.right, code + "1", codes);
+
+      return codes;
+    }
+
+    function huffmanEncode() {
+      const text = document.getElementById("huffmanInput").value;
+
+      if (!text) {
+        alert("⚠️ Iltimos, matn kiriting!");
+        return;
+      }
+
+      huffmanRoot = buildHuffmanTree(text);
+      huffmanCodes = generateCodes(huffmanRoot);
+
+      encodedHuffman = text
+        .split("")
+        .map((char) => huffmanCodes[char])
+        .join("");
+
+      displayHuffmanResults(text, encodedHuffman, huffmanCodes);
+      drawHuffmanTree(huffmanRoot);
+    }
+
+    function huffmanDecode() {
+      if (!huffmanRoot || !encodedHuffman) {
+        alert("⚠️ Avval matnni kodlang!");
+        return;
+      }
+
+      let decoded = "";
+      let current = huffmanRoot;
+
+      for (let bit of encodedHuffman) {
+        current = bit === "0" ? current.left : current.right;
+
+        if (current.char !== null) {
+          decoded += current.char;
+          current = huffmanRoot;
+        }
+      }
+
+      alert("✅ Dekodlangan matn:\n\n" + decoded);
+    }
+
+    function displayHuffmanResults(original, encoded, codes) {
+      const originalSize = original.length * 8;
+      const encodedSize = encoded.length;
+      const compression = ((1 - encodedSize / originalSize) * 100).toFixed(2);
+
+      const freqMap = {};
+      for (let char of original) {
+        freqMap[char] = (freqMap[char] || 0) + 1;
+      }
+
+      let html = `
+                <div class="result-box">
+                    <h3>📈 Siqish Statistikasi</h3>
+                    
+                    <div class="stats">
+                        <div class="stat-card">
+                            <h4>Asl hajm</h4>
+                            <p>${originalSize} bit</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Siqilgan hajm</h4>
+                            <p class="success">${encodedSize} bit</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Siqish darajasi</h4>
+                            <p class="success">${compression}%</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Tejangan hajm</h4>
+                            <p class="success">${originalSize - encodedSize
+        } bit</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 30px;">📋 Huffman Kodlar Jadvali</h3>
+                    <table class="code-table">
+                        <tr>
+                            <th>Belgi</th>
+                            <th>Chastota</th>
+                            <th>Huffman Kodi</th>
+                            <th>Kod Uzunligi</th>
+                        </tr>
+                        ${Object.entries(codes)
+          .sort((a, b) => freqMap[b[0]] - freqMap[a[0]])
+          .map(
+            ([char, code]) => `
+                            <tr>
+                                <td><strong>${char === " "
+                ? "⎵ [space]"
+                : char === "\n"
+                  ? "↵ [enter]"
+                  : char
+              }</strong></td>
+                                <td>${freqMap[char]} marta</td>
+                                <td><code>${code}</code></td>
+                                <td>${code.length} bit</td>
+                            </tr>
+                        `
+          )
+          .join("")}
+                    </table>
+
+                    <h3 style="margin-top: 30px;">🔐 Kodlangan Binary Ma'lumot</h3>
+                    <p class="encoded-text">${encoded}</p>
+                    
+                    <div class="info-box">
+                        <p><strong>💡 Natija tahlili:</strong></p>
+                        <p>✅ Ko'p uchraydigan belgilar qisqa kod oldi (eng qisqasi: ${Object.entries(codes).sort(
+            (a, b) => a[1].length - b[1].length
+          )[0][1].length
+        } bit)</p>
+                        <p>✅ Kam uchraydigan belgilar uzunroq kod oldi (eng uzuni: ${Object.entries(codes).sort(
+          (a, b) => b[1].length - a[1].length
+        )[0][1].length
+        } bit)</p>
+                        <p>✅ Umumiy tejamkorlik: <strong>${compression}%</strong> yoki <strong>${originalSize - encodedSize
+        } bit</strong></p>
+                        <p>🎯 Bu algoritm ma'lumotlarni <strong>yo'qotishsiz</strong> siqadi - dekodlash orqali asl matnni to'liq qaytarish mumkin!</p>
+                    </div>
+                </div>
+            `;
+
+      document.getElementById("huffmanResults").innerHTML = html;
+    }
+
+    function drawHuffmanTree(root) {
+      const canvas = document.getElementById("huffmanTree");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 450;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      function getDepth(node) {
+        if (!node) return 0;
+        return 1 + Math.max(getDepth(node.left), getDepth(node.right));
+      }
+
+      const depth = getDepth(root);
+
+      function drawNode(node, x, y, offsetX, level = 0) {
+        if (!node) return;
+
+        if (node.left) {
+          const leftX = x - offsetX;
+          const leftY = y + 80;
+
+          ctx.beginPath();
+          ctx.moveTo(x, y + 30);
+          ctx.lineTo(leftX, leftY - 30);
+          ctx.strokeStyle = "#667eea";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          ctx.fillStyle = "#667eea";
+          ctx.font = "bold 18px Arial";
+          ctx.fillText("0", (x + leftX) / 2 - 20, (y + leftY) / 2);
+
+          drawNode(node.left, leftX, leftY, offsetX / 2, level + 1);
+        }
+
+        if (node.right) {
+          const rightX = x + offsetX;
+          const rightY = y + 80;
+
+          ctx.beginPath();
+          ctx.moveTo(x, y + 30);
+          ctx.lineTo(rightX, rightY - 30);
+          ctx.strokeStyle = "#764ba2";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          ctx.fillStyle = "#764ba2";
+          ctx.font = "bold 18px Arial";
+          ctx.fillText("1", (x + rightX) / 2 + 15, (y + rightY) / 2);
+
+          drawNode(node.right, rightX, rightY, offsetX / 2, level + 1);
+        }
+
+        ctx.beginPath();
+        ctx.arc(x, y, 30, 0, 2 * Math.PI);
+
+        const gradient = ctx.createLinearGradient(
+          x - 30,
+          y - 30,
+          x + 30,
+          y + 30
+        );
+        if (node.char) {
+          gradient.addColorStop(0, "#667eea");
+          gradient.addColorStop(1, "#764ba2");
+        } else {
+          gradient.addColorStop(0, "#e0e0e0");
+          gradient.addColorStop(1, "#bdbdbd");
+        }
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = node.char ? "#fff" : "#333";
+        ctx.font = "bold 16px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        const displayText = node.char || node.freq.toString();
+        ctx.fillText(displayText, x, y);
+      }
+
+      const startX = canvas.width / 2;
+      const startY = 50;
+      const initialOffset = canvas.width / (depth + 1);
+
+      drawNode(root, startX, startY, initialOffset);
+
+      ctx.fillStyle = "#667eea";
+      ctx.font = "bold 18px Arial";
+      ctx.textAlign = "left";
+      ctx.fillText("🌳 Huffman Daraxti", 15, 30);
+    }
+  </script>
+</body>
+
+</html>
